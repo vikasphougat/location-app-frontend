@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 type LocationState = {
   lat: number;
@@ -17,7 +17,7 @@ type SearchResponse = {
 };
 
 export default function Home() {
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const [location, setLocation] = useState<LocationState>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [locationAsked, setLocationAsked] = useState(false);
@@ -31,7 +31,7 @@ export default function Home() {
     setLocationAsked(true);
 
     if (!navigator.geolocation) {
-      setLocationError("Geolocation is not supported by your browser.");
+      setLocationError('Geolocation is not supported by your browser.');
       return;
     }
 
@@ -41,7 +41,7 @@ export default function Home() {
         setLocationError(null);
       },
       (err) => {
-        setLocationError(err.message || "Failed to get location.");
+        setLocationError(err.message || 'Failed to get location.');
       },
       { enableHighAccuracy: true }
     );
@@ -49,28 +49,28 @@ export default function Home() {
 
   async function handleSearch() {
     if (!location) {
-      setSearchError("Please allow location access first.");
+      setSearchError('Please allow location access first.');
       return;
     }
     setSearchError(null);
     setAddresses([]);
     setLoading(true);
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://location-app-befq.onrender.com';
     try {
       const res = await fetch(`${apiUrl}/location`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: name.trim(),
           lat: location.lat,
-          lng: location.lng,
-        }),
+          lng: location.lng
+        })
       });
       const data: SearchResponse = await res.json();
 
       if (!res.ok) {
-        setSearchError(data.error || "Request failed.");
+        setSearchError(data.error || 'Request failed.');
         return;
       }
       if (data.addresses && data.addresses.length > 0) {
@@ -79,10 +79,10 @@ export default function Home() {
         setAddresses([data.address]);
       } else {
         setAddresses([]);
-        setSearchError(data.error || "No address returned.");
+        setSearchError(data.error || 'No address returned.');
       }
     } catch (e) {
-      setSearchError(e instanceof Error ? e.message : "Network error.");
+      setSearchError(e instanceof Error ? e.message : 'Network error.');
     } finally {
       setLoading(false);
     }
@@ -100,7 +100,7 @@ export default function Home() {
                 placeholder="Enter your name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 className="flex-1 bg-white/15 border-white/30 text-white placeholder:text-white/60"
               />
               <Button
@@ -108,27 +108,21 @@ export default function Home() {
                 disabled={loading || !location}
                 className="shrink-0 bg-white/20 text-white hover:bg-white/30 border border-white/30"
               >
-                {loading ? "Searching…" : "Search Location"}
+                {loading ? 'Searching…' : 'Search Location'}
               </Button>
             </div>
-            {locationError && (
-              <p className="text-sm text-red-200">{locationError}</p>
-            )}
+            {locationError && <p className="text-sm text-red-200">{locationError}</p>}
             {!location && !locationError && (
               <p className="text-sm text-white/80">Requesting location…</p>
             )}
-            {searchError && (
-              <p className="text-sm text-red-200">{searchError}</p>
-            )}
+            {searchError && <p className="text-sm text-red-200">{searchError}</p>}
           </div>
         </div>
 
         {/* Results box (below search) */}
         {addresses.length > 0 && (
           <div className="w-full rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-xl">
-            <h3 className="text-sm font-semibold text-white/90 mb-3">
-              Location address(es)
-            </h3>
+            <h3 className="text-sm font-semibold text-white/90 mb-3">Location address(es)</h3>
             <ul className="space-y-2">
               {addresses.map((addr, i) => (
                 <li
